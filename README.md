@@ -12,7 +12,7 @@ npm install figma-jsonrpc
 
 - Define your API in a separate file (in `api.ts` for example):
 
-  ```js
+  ```ts
   import rpc from "figma-jsonrpc";
 
   export const api = rpc({
@@ -30,7 +30,7 @@ npm install figma-jsonrpc
 
 - Import the API in your plugin (so that it can respond to it):
 
-  ```js
+  ```ts
   import "./api";
 
   // This shows the HTML page in "ui.html".
@@ -39,7 +39,7 @@ npm install figma-jsonrpc
 
 - Use the API in the UI of the plugin:
 
-  ```js
+  ```ts
   import { api } from "./api";
 
   const pong = await api.ping();
