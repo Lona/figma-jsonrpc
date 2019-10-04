@@ -13,15 +13,8 @@ module.exports = function rpc(methods) {
     });
   }
 
-  return new Proxy(methods, {
-    set() {
-      return false;
-    },
-    get(target, p, receiver) {
-      if (typeof p !== "string") {
-        return;
-      }
-      return (...params) => sendRequest(p, params);
-    }
-  });
+  return Object.keys(methods).reduce((prev, p) => {
+    prev[p] = (...params) => sendRequest(p, params);
+    return prev;
+  }, {});
 };
