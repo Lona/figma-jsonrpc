@@ -1,7 +1,8 @@
 export default function rpc<
   T extends { [method: string]: (...args: any[]) => any | Promise<any> }
 >(
-  methods: T
+  methods: T,
+  options?: { timeout?: number; defineOnUI?: boolean }
 ): Readonly<
   {
     [K in keyof T]: (
