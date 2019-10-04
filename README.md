@@ -10,39 +10,44 @@ npm install figma-jsonrpc
 
 ## Usage
 
-You can use the same API in both your plugin and your UI.
+- Define your API in a separate file (in `api.ts` for example):
 
-```js
-import { setup, sendNotification, sendRequest } from "figma-jsonrpc";
-import { MethodNotFound } from "figma-jsonrpc/errors";
+  ```js
+  import rpc from "figma-jsonrpc";
 
-setup({
-  onNotification(method, params) {
-    // handle a notification
-  },
-  onRequest(method, params) {
-    // handle a request
-    switch (method) {
-      case "ping":
-        // can either return a result directly
-        return "pong";
-      case "pong":
-        // or return a Promise
-        return Promise.resolve("ping");
-      default:
-        throw new MethodNotFound();
+  export const api = rpc({
+    ping() {
+      return "pong";
+    },
+    setToken(token: string) {
+      return figma.clientStorage.setAsync("token", token);
+    },
+    getToken() {
+      return figma.clientStorage.getAsync("token");
     }
-  }
-});
-
-sendRequest("ping")
-  .then(pong => {
-    sendNotification("pong", { msg: pong });
-  })
-  .catch(err => {
-    // something bad happened
   });
-```
+  ```
+
+- Import the API in your plugin (so that it can respond to it):
+
+  ```js
+  import "./api";
+
+  // This shows the HTML page in "ui.html".
+  figma.showUI(__html__);
+  ```
+
+- Use the API in the UI of the plugin:
+
+  ```js
+  import { api } from "./api";
+
+  const pong = await api.ping();
+  const token = await api.getToken();
+  await api.setToken("new token");
+  ```
+
+The typescript definition of the API is automatically inferred from the methods passed to `rpc`.
 
 ## License
 
