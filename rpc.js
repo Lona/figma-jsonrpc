@@ -44,18 +44,23 @@ function sendError(id, error) {
 }
 
 function handleRaw(data) {
-  try {
-    data.split("\n").forEach(bunch => {
-      bunch = bunch.trim();
-      if (!bunch) {
-        return;
-      }
-      const json = JSON.parse(bunch);
-      handleRpc(json);
-    });
-  } catch (err) {
-    console.error(err);
-    console.error(data);
+  if (
+    (typeof data === "string" || data instanceof String) &&
+    data.includes('"jsonrpc":"2.0"')
+  ) {
+    try {
+      data.split("\n").forEach(bunch => {
+        bunch = bunch.trim();
+        if (!bunch) {
+          return;
+        }
+        const json = JSON.parse(bunch);
+        handleRpc(json);
+      });
+    } catch (err) {
+      console.error(err);
+      console.error(data);
+    }
   }
 }
 
