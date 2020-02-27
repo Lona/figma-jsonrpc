@@ -1,7 +1,7 @@
 {
   "name": "figma-jsonrpc",
   "version": "0.3.4",
-  "description": "",
+  "description": "Leverage JSON-RPC to communicate between your Figma plugin and your Figma UI",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
