@@ -28,9 +28,9 @@ module.exports = function rpc(methods, options) {
   return Object.keys(methods).reduce((prev, p) => {
     prev[p] = (...params) => {
       if (!defineOnUI && typeof figma !== "undefined") {
-        return Promise.resolve().then(() => methods[method](...params));
+        return Promise.resolve().then(() => methods[p](...params));
       } else if (defineOnUI && typeof parent !== "undefined") {
-        return Promise.resolve().then(() => methods[method](...params));
+        return Promise.resolve().then(() => methods[p](...params));
       }
       return sendRequest(p, params, timeout);
     };
