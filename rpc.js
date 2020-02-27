@@ -87,14 +87,20 @@ function handleRpc(json) {
   }
 }
 
-let onRequest = () => {};
-let onNotification = () => {};
+let methods = {};
+
+function onRequest(method, params) {
+  if (!methods[method]) {
+    throw new MethodNotFound();
+  }
+  return methods[method](...params);
+}
 
 function handleNotification(json) {
   if (!json.method) {
     return;
   }
-  onNotification(json.method, json.params);
+  onRequest(json.method, json.params);
 }
 
 function handleRequest(json) {
@@ -116,15 +122,8 @@ function handleRequest(json) {
   }
 }
 
-module.exports.setup = callbacks => {
-  if (callbacks) {
-    if (callbacks.onRequest) {
-      onRequest = callbacks.onRequest;
-    }
-    if (callbacks.onNotification) {
-      onNotification = callbacks.onNotification;
-    }
-  }
+module.exports.setup = _methods => {
+  Object.assign(methods, _methods);
 };
 
 module.exports.sendNotification = (method, params) => {
