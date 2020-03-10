@@ -13,7 +13,7 @@ npm install figma-jsonrpc
 - Define your API in a separate file (in `api.ts` for example):
 
   ```ts
-  import rpc from "figma-jsonrpc";
+  import { createPluginAPI, createUIAPI } from "figma-jsonrpc";
 
   // those methods will be executed in the Figma plugin,
   // regardless of where they are called from
