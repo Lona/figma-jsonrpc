@@ -15,8 +15,7 @@ let pending = {};
 
 function sendJson(req) {
   try {
-    const data = JSON.stringify(req) + "\n";
-    sendRaw(data);
+    sendRaw(req);
   } catch (err) {
     console.error(err);
   }
@@ -45,14 +44,10 @@ function sendError(id, error) {
 
 function handleRaw(data) {
   try {
-    data.split("\n").forEach(bunch => {
-      bunch = bunch.trim();
-      if (!bunch) {
-        return;
-      }
-      const json = JSON.parse(bunch);
-      handleRpc(json);
-    });
+    if (!data) {
+      return;
+    }
+    handleRpc(data);
   } catch (err) {
     console.error(err);
     console.error(data);
