@@ -51,7 +51,7 @@ module.exports = function useFigmaSelection() {
         api.__deregisterForSelectionChange();
       }
     };
-  }, []);
+  }, [setSelection]);
 
   const setFigmaSelection = useCallback(api.__setSelection, []);
 
