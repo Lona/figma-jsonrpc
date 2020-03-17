@@ -1,4 +1,5 @@
 const RPCError = require("./errors");
+const { MethodNotFound } = require("./errors");
 
 let sendRaw;
 
@@ -86,7 +87,7 @@ let methods = {};
 
 function onRequest(method, params) {
   if (!methods[method]) {
-    throw new MethodNotFound();
+    throw new MethodNotFound(method);
   }
   return methods[method](...params);
 }

@@ -1,18 +1,10 @@
 const { setup, sendRequest } = require("./rpc");
-const { MethodNotFound } = require("./errors");
 
 module.exports.createUIAPI = function createUIAPI(methods, options) {
   const timeout = options && options.timeout;
 
   if (typeof parent !== "undefined") {
-    setup({
-      onRequest(method, params) {
-        if (!methods[method]) {
-          throw new MethodNotFound();
-        }
-        return methods[method](...params);
-      }
-    });
+    setup(methods);
   }
 
   return Object.keys(methods).reduce((prev, p) => {
@@ -30,14 +22,7 @@ module.exports.createPluginAPI = function createPluginAPI(methods, options) {
   const timeout = options && options.timeout;
 
   if (typeof figma !== "undefined") {
-    setup({
-      onRequest(method, params) {
-        if (!methods[method]) {
-          throw new MethodNotFound();
-        }
-        return methods[method](...params);
-      }
-    });
+    setup(methods);
   }
 
   return Object.keys(methods).reduce((prev, p) => {

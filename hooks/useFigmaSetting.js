@@ -22,19 +22,43 @@ const api = createPluginAPI({
 });
 
 module.exports = function useFigmaSetting(key) {
-  const [setting, setSetting] = useState(api.__getSetting(key));
+  const [state, setState] = useState({
+    setting: null,
+    error: null,
+    loading: true
+  });
 
   const setThisSetting = useCallback(
     (_key, data) => {
       if (_key === key) {
-        setSetting(data);
+        setState({
+          setting: data,
+          error: null,
+          loading: false
+        });
       }
     },
-    [setSetting, key]
+    [setState, key]
   );
 
   useEffect(() => {
     listeners.push(setThisSetting);
+    api
+      .__getSetting(key)
+      .then(setting =>
+        setState({
+          setting,
+          error: null,
+          loading: false
+        })
+      )
+      .catch(error =>
+        setState({
+          setting: null,
+          error,
+          loading: false
+        })
+      );
     return () => {
       listeners = listeners.filter(l => l !== setThisSetting);
     };
@@ -44,5 +68,5 @@ module.exports = function useFigmaSetting(key) {
     key
   ]);
 
-  return [setting, setFigmaSetting];
+  return [state.setting, state.error, state.loading, setFigmaSetting];
 };

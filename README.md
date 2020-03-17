@@ -87,9 +87,11 @@ Two React hooks you can use in your UI which will setup the necessary APIs for y
   import useFigmaSetting from "figma-jsonrpc/hooks/useFigmaSetting";
 
   const Component = () => {
-    const [token, setToken] = useFigmaSetting("token");
+    const [token, error, loading, setToken] = useFigmaSetting("token");
   };
   ```
+
+In both cases, you also need to import `figma-jsonrpc/hooks/*` in your plugin to create the APIs.
 
 ## License
 

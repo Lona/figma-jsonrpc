@@ -1,6 +1,6 @@
 {
   "name": "figma-jsonrpc",
-  "version": "0.4.0-pre2",
+  "version": "0.4.0-pre5",
   "description": "Leverage JSON-RPC to communicate between your Figma plugin and your Figma UI",
   "main": "index.js",
   "scripts": {
