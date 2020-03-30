@@ -1,4 +1,5 @@
 const RPCError = require("./errors");
+const { MethodNotFound } = require("./errors");
 
 let sendRaw;
 
@@ -15,8 +16,7 @@ let pending = {};
 
 function sendJson(req) {
   try {
-    const data = JSON.stringify(req) + "\n";
-    sendRaw(data);
+    sendRaw(req);
   } catch (err) {
     console.error(err);
   }
@@ -45,14 +45,10 @@ function sendError(id, error) {
 
 function handleRaw(data) {
   try {
-    data.split("\n").forEach(bunch => {
-      bunch = bunch.trim();
-      if (!bunch) {
-        return;
-      }
-      const json = JSON.parse(bunch);
-      handleRpc(json);
-    });
+    if (!data) {
+      return;
+    }
+    handleRpc(data);
   } catch (err) {
     console.error(err);
     console.error(data);
@@ -87,14 +83,20 @@ function handleRpc(json) {
   }
 }
 
-let onRequest = () => {};
-let onNotification = () => {};
+let methods = {};
+
+function onRequest(method, params) {
+  if (!methods[method]) {
+    throw new MethodNotFound(method);
+  }
+  return methods[method](...params);
+}
 
 function handleNotification(json) {
   if (!json.method) {
     return;
   }
-  onNotification(json.method, json.params);
+  onRequest(json.method, json.params);
 }
 
 function handleRequest(json) {
@@ -116,15 +118,8 @@ function handleRequest(json) {
   }
 }
 
-module.exports.setup = callbacks => {
-  if (callbacks) {
-    if (callbacks.onRequest) {
-      onRequest = callbacks.onRequest;
-    }
-    if (callbacks.onNotification) {
-      onNotification = callbacks.onNotification;
-    }
-  }
+module.exports.setup = _methods => {
+  Object.assign(methods, _methods);
 };
 
 module.exports.sendNotification = (method, params) => {

@@ -1,6 +1,6 @@
 # figma-JSONRPC
 
-Leverage [JSON-RPC](https://www.jsonrpc.org) to communicate between your Figma plugin and your Figma UI.
+Leverage [JSON-RPC](https://www.jsonrpc.org) to communicate between your [Figma](https://www.figma.com/) plugin and your Figma UI.
 
 ## Installation
 
@@ -13,11 +13,11 @@ npm install figma-jsonrpc
 - Define your API in a separate file (in `api.ts` for example):
 
   ```ts
-  import rpc from "figma-jsonrpc";
+  import { createPluginAPI, createUIAPI } from "figma-jsonrpc";
 
   // those methods will be executed in the Figma plugin,
   // regardless of where they are called from
-  export const api = rpc({
+  export const api = createPluginAPI({
     ping() {
       return "pong";
     },
@@ -31,14 +31,11 @@ npm install figma-jsonrpc
 
   // those methods will be executed in the Figma UI,
   // regardless of where they are called from
-  export const uiApi = rpc(
-    {
-      selectionChanged(selection) {
-        return "pong";
-      }
-    },
-    { defineOnUI: true }
-  );
+  export const uiApi = createUIAPI({
+    selectionChanged(selection) {
+      return "pong";
+    }
+  });
   ```
 
 - Use the UI API in the plugin:
@@ -67,6 +64,34 @@ npm install figma-jsonrpc
 The typescript definition of the API is automatically inferred from the methods passed to `rpc` :sparkles:.
 
 > :warning: You always need to import the API in both the plugin and the UI, even if you aren't using it. It is necessary so that both part can handle calls from each other.
+
+## One more thing...
+
+Using React? There are a couple of treats for you.
+
+Two React hooks you can use in your UI which will setup the necessary APIs for you.
+
+- `useFigmaSelection`: get and set the current [Figma selection](https://www.figma.com/plugin-docs/api/properties/PageNode-selection/#docsNav)
+
+  ```js
+  import useFigmaSelection from "figma-jsonrpc/hooks/useFigmaSelection";
+
+  const Component = () => {
+    const [selection, setSelection] = useFigmaSelection();
+  };
+  ```
+
+- `useFigmaSetting`: get and set any [setting](https://www.figma.com/plugin-docs/api/figma-clientStorage/)
+
+  ```js
+  import useFigmaSetting from "figma-jsonrpc/hooks/useFigmaSetting";
+
+  const Component = () => {
+    const [token, error, loading, setToken] = useFigmaSetting("token");
+  };
+  ```
+
+In both cases, you also need to import `figma-jsonrpc/hooks/*` in your plugin to create the APIs.
 
 ## License
 
