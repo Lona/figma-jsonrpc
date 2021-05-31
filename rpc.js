@@ -4,7 +4,7 @@ const { MethodNotFound } = require("./errors");
 let sendRaw;
 
 if (typeof figma !== "undefined") {
-  figma.ui.onmessage = message => handleRaw(message);
+  figma.ui.on('message', message => handleRaw(message));
   sendRaw = message => figma.ui.postMessage(message);
 } else if (typeof parent !== "undefined") {
   onmessage = event => handleRaw(event.data.pluginMessage);
